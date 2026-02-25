@@ -1,28 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Creative WebGL Site</title>
-  </head>
-  <body>
-    <!-- The 3D Canvas Background -->
-    <div id="canvas-container"></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IGLOO Inc.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Varela+Round&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- 3D Background -->
+  <div id="canvas-container"></div>
 
-    <!-- The HTML Foreground -->
-    <main id="smooth-wrapper">
-      <section class="hero">
-        <h1>EXPERIENCE</h1>
-        <p>Scroll down to interact</p>
-      </section>
+  <!-- UI Overlay -->
+  <main class="ui-layer">
+    <!-- Logo -->
+    <div class="logo">IGLOO</div>
 
-      <section class="content">
-        <h2>NEXT LEVEL WEB</h2>
-        <p>HTML layered over WebGL.</p>
-      </section>
-    </main>
+    <!-- Center HUD Lines & Labels -->
+    <div class="hud-container">
+      
+      <!-- Top Left Label -->
+      <div class="hud-item pos-tl">
+        <div class="hud-text">PORTFOLIO_CO_03<br>ABSTRACT</div>
+        <svg class="hud-line" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <polyline points="0,5 50,5 95,95" />
+        </svg>
+      </div>
 
-    <script type="module" src="/src/main.js"></script>
-  </body>
+      <!-- Top Right Label -->
+      <div class="hud-item pos-tr">
+        <div class="hud-text right-align">TEMP &nbsp;&nbsp;20.56<br>-06.36</div>
+      </div>
+
+      <!-- Bottom Right Label -->
+      <div class="hud-item pos-br">
+        <svg class="hud-line-br" viewBox="0 0 100 50" preserveAspectRatio="none">
+          <polyline points="100,25 30,25 0,0" />
+        </svg>
+        <div class="hud-text right-align">D 06.28.2024<br>CLICK TO EXPLORE</div>
+      </div>
+
+    </div>
+
+    <!-- Bottom Controls -->
+    <div class="bottom-bar">
+      <div class="sound-toggle">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+        Sound: On
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
 </html>
