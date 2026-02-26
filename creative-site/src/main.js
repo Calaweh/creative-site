@@ -49,15 +49,32 @@ const uniforms = {
 const mainGroup = new THREE.Group();
 scene.add(mainGroup);
 
-// 1. Core
-const coreMat = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.3 });
-const coreMesh = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.2), coreMat);
-mainGroup.add(coreMesh);
+// --- 1. THE DARK INTERIOR CORE (Crucial for the moody look) ---
+const coreGroup = new THREE.Group();
+
+// The dark, matte block inside
+const coreMat = new THREE.MeshStandardMaterial({ color: 0x1a1c23, roughness: 1.0 });
+const coreMesh = new THREE.Mesh(new THREE.BoxGeometry(0.9, 1.2, 0.4), coreMat);
+coreGroup.add(coreMesh);
+
+const frameMat = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.3 });
+const frameMesh = new THREE.Mesh(new THREE.BoxGeometry(0.95, 1.25, 0.45), frameMat);
+coreGroup.add(frameMesh);
+
+mainGroup.add(coreGroup);
 
 // 2. Ice
 const shardGeo = createIceShard();
 const shardMat = new THREE.ShaderMaterial({
-  vertexShader, fragmentShader, uniforms, transparent: true, side: THREE.DoubleSide
+  vertexShader, 
+  fragmentShader, 
+  uniforms, 
+  transparent: true, 
+  side: THREE.DoubleSide,
+  // THIS IS REQUIRED TO MAKE fwidth() WORK:
+  extensions: {
+    derivatives: true 
+  }
 });
 const iceShard = new THREE.Mesh(shardGeo, shardMat);
 mainGroup.add(iceShard);
@@ -68,7 +85,7 @@ const count = 1000;
 const dustPos = new Float32Array(count * 3);
 for(let i=0; i<count*3; i++) dustPos[i] = (Math.random() - 0.5) * 25;
 dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
-const dustMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.04, transparent: true, opacity: 0.4 });
+const dustMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.06 });
 const dust = new THREE.Points(dustGeo, dustMat);
 scene.add(dust);
 

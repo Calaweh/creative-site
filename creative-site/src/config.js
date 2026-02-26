@@ -1,43 +1,34 @@
 export const CONFIG = {
   scene: {
-    bgColor: 0xa6b0bd,
+    bgColor: 0x8c94a0, 
     cameraZ: 8.5,
   },
   bloom: {
-    strength: 0.5, // Increased slightly to catch the new sharp edges
+    strength: 1.0,
     radius: 0.4,
-    threshold: 0.85, 
+    threshold: 0.75, 
   },
-  iceShape: {
-    detailX: 100,             
-    detailY: 200, // Very high vertical resolution required
-    detailZ: 100,
-    width: 2.0,            
-    height: 5.2,            
-    depth: 2.0,           
-    
-    // NEW: PHYSICAL RIDGE PARAMETERS
-    ridgeScale: 2.5,        // How clustered the lines are
-    ridgeDensity: 15.0,     // Vertical stretching (High = long lines)
-    ridgeDepth: 0.08,       // Physical depth of the cuts
-    
-    fractureScale: 1.3,        
-    windowSize: 0.9,          
+  geometry: {
+    // Note: Resolution is now automatic (Icosahedron)
+    width: 2.5,            
+    height: 5.0,            
+    depth: 2.2,           
+    windowSize: 0.8,          
   },
   optics: {
-    ior: 1.31,              
-    refractStrength: 0.4,   
-    dispersion: 0.04,       
-    absorption: [0.6, 0.2, 0.05] // Deep Blue/Green absorption
+    ior: 1.65,              
+    refractStrength: 0.3,   // Cleaner refraction
+    dispersion: 0.08,       // Stronger rainbows
+    absorption:[1.5, 1.1, 0.8] 
   },
   colors: {
-    skinLine:[0.3, 0.9, 1.0], 
+    skinLine:[0.5, 0.8, 1.0], 
   },
   interaction: {
-    maxPulses: 40,          
-    pulseSpeed: 2.0,        
-    pulseDecay: 6.0,        
-    spawnDistance: 0.15,     
+    maxPulses: 60,          
+    pulseSpeed: 1.5,        
+    pulseDecay: 3.5,        
+    spawnDistance: 0.5,     
     timerSpeed: 0.01,      
     rotationLerp: 0.05      
   }
