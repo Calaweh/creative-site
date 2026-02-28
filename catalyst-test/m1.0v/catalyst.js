@@ -67,9 +67,8 @@ export class Catalyst {
         uMicroScale: { value: p.uMicroScale || 250.0 },
         uBumpIntensity: { value: p.uBumpIntensity || 0.015 },
 
-        uVerticalStretch: { value: p.uVerticalStretch || 20.0 },
+        uVerticalStretch: { value: p.uVerticalStretch || 20.0 }
 
-        uGrowth: { value: 1.0 },
       },
       vertexShader: `
         varying vec3 vWorldPos;
@@ -78,82 +77,12 @@ export class Catalyst {
         varying float vWindow;
         attribute float aWindow; 
 
-        uniform float uTime;
-        uniform float uGrowth; 
-        uniform float uVerticalStretch; // We need this here now!
-
-        // --- 3D NOISE FUNCTION ---
-        // (Same fast hash function as before)
-        vec3 hash3(vec3 p) {
-            p = vec3(dot(p, vec3(127.1, 311.7, 74.7)),
-                     dot(p, vec3(269.5, 183.3, 246.1)),
-                     dot(p, vec3(113.5, 271.9, 124.6)));
-            return -1.0 + 2.0 * fract(sin(p) * 43758.5453123);
-        }
-
-        float noise(vec3 p) {
-            vec3 i = floor(p);
-            vec3 f = fract(p);
-            vec3 u = f * f * (3.0 - 2.0 * f);
-            return mix(mix(mix(dot(hash3(i + vec3(0,0,0)), f - vec3(0,0,0)), 
-                               dot(hash3(i + vec3(1,0,0)), f - vec3(1,0,0)), u.x),
-                           mix(dot(hash3(i + vec3(0,1,0)), f - vec3(0,1,0)), 
-                               dot(hash3(i + vec3(1,1,0)), f - vec3(1,1,0)), u.x), u.y),
-                       mix(mix(dot(hash3(i + vec3(0,0,1)), f - vec3(0,0,1)), 
-                               dot(hash3(i + vec3(1,0,1)), f - vec3(1,0,1)), u.x),
-                           mix(dot(hash3(i + vec3(0,1,1)), f - vec3(0,1,1)), 
-                               dot(hash3(i + vec3(1,1,1)), f - vec3(1,1,1)), u.x), u.y), u.z);
-        }
-
         void main() {
           vWindow = aWindow;
           vPosition = position;
-          
-          // 1. BASE SHAPES
-          vec3 boxPos = position;
-          vec3 spherePos = normalize(position) * 1.3; 
-          
-          // 2. LIQUID PHASE (Boiling blobs)
-          float boilNoise = noise(position * 2.5 + uTime * 1.5) * 0.4;
-          
-          // 3. SOLID PHASE (Linear Columns)
-          // We stretch the Y coordinate significantly to make vertical ridges
-          // This matches the logic we used in the Fragment Shader!
-          vec3 linearCoords = position * 3.0; // Density
-          linearCoords.y /= uVerticalStretch; // Stretch
-          
-          float linearRidge = noise(linearCoords);
-          
-          // Sharpen the physical ridges using power function
-          linearRidge = pow(abs(linearRidge), 2.0) * 0.5;
-          
-          // Don't displace the window area
-          linearRidge *= (1.0 - aWindow); 
-
-          // 4. BLEND PHASES BASED ON GROWTH
-          // Liquid = Round Noise. Solid = Linear Ridges.
-          float currentDisplacement = mix(boilNoise, linearRidge, uGrowth);
-          
-          // 5. APPLY
-          // We apply displacement along the normal
-          spherePos += normal * currentDisplacement * (1.0 - uGrowth); // Liquid expands
-          boxPos += normal * currentDisplacement * 0.5;                // Solid is tighter
-
-          // Smooth mix between sphere shape and box shape
-          float mixFactor = smoothstep(0.0, 0.85, uGrowth);
-          vec3 finalPos = mix(spherePos, boxPos, mixFactor);
-          
-          // Grow scale
-          finalPos *= (0.4 + 0.6 * uGrowth);
-
-          vWorldPos = (modelMatrix * vec4(finalPos, 1.0)).xyz;
-          
-          // Recalculate Normal (Approximation)
-          // We blend the sphere normal with the box normal
-          vec3 mixedNormal = normalize(mix(normalize(finalPos), normal, mixFactor));
-          vNormal = normalize(normalMatrix * mixedNormal);
-          
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(finalPos, 1.0);
+          vWorldPos = (modelMatrix * vec4(position, 1.0)).xyz;
+          vNormal = normalize(normalMatrix * normal);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
         }
       `,
       fragmentShader: `

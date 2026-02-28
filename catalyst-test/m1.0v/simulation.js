@@ -191,4 +191,31 @@ export class CrystalGrowthEngine {
     ctx.putImageData(img, 0, 0);
     this.textureCanvas = cv;
   }
+
+  buildTexture() {
+    const sz = 512;
+    const cv = document.createElement('canvas');
+    cv.width = cv.height = sz;
+    const ctx = cv.getContext('2d');
+    const p = this.p;
+    
+    const img = ctx.createImageData(sz, sz);
+    const d = img.data;
+    
+    // Generate a grayscale "frost" noise map to feed into the shader
+    for (let i = 0; i < d.length; i += 4) {
+        const px = (i/4) % sz, py = Math.floor(i/4/sz);
+        const turbOffset = this.N.noise(px * 0.05, py * 0.05, 10.0) * ((p.turbulence||0.2) * 20.0);
+        const n2 = this.N.noise((px + turbOffset) * 0.02, py * 0.02, 5.0);
+        
+        // High frequency "cracks" based on supersaturation
+        const crack = Math.pow(Math.abs(n2), 3.0) * ((p.supersaturation||0.3) * 2.0);
+        let val = Math.max(0, Math.min(255, 128 + crack * 255));
+        
+        d[i] = d[i+1] = d[i+2] = val; // Grayscale
+        d[i+3] = 255; // Alpha
+    }
+    ctx.putImageData(img, 0, 0);
+    this.textureCanvas = cv;
+  }
 }

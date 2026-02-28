@@ -56,8 +56,6 @@ const params = {
     uBumpIntensity: 0.015,
 
     uVerticalStretch: 20.0,
-
-    growth: 1.0,
     
     autoRotate: true
 };
@@ -151,7 +149,6 @@ gui.add({ clear: () => { specimens.forEach(s => scene.remove(s.getObject())); sp
 // SELECTED OBJECT FOLDERS
 const selectionFolder = gui.addFolder("Selected: Shape");
 const selectionMatFolder = gui.addFolder("Selected: Texture");
-const shapeFolder = gui.addFolder("Growth Simulation");
 
 let rebuildTimer = null;
 function debouncedRebuild() {
@@ -202,10 +199,6 @@ selectionMatFolder.add(params, 'uBumpIntensity', 0.0, 0.05).name('Frost Intensit
 });
 selectionMatFolder.add(params, 'uVerticalStretch', 1.0, 50.0).name('Linear Stretch').onChange(v => {
     if(selectedCatalyst) selectedCatalyst.material.uniforms.uVerticalStretch.value = v;
-});
-
-shapeFolder.add(params, 'growth', 0.0, 1.0).name('Growth Progress').onChange(v => {
-    if(selectedCatalyst) selectedCatalyst.material.uniforms.uGrowth.value = v;
 });
 
 gui.add(params, 'autoRotate');
